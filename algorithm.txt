@@ -1,0 +1,3 @@
+-- Get Sick leaves
+-- Check if any have elapsed 24 hours
+-- Approve if any have passed

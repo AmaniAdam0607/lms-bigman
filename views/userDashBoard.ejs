@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Document</title>
+    <style>
+        img.large {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="w-screen h-screen p-2">
+
+        <!-- Top Bar -->
+        <div class="h-20 mb-2 bg-gray-600 flex flex-row justify-between items-center p-4">
+            <div class="text-xl text-white">
+                Leave Management System
+            </div>
+
+            <div class="flex flex-row items-center gap-2">
+                <div class="h-10 w-10 rounded-full bg-white">
+                </div>
+                <div class="text-xl text-white ">
+                    <%= staff.name %>
+                </div>
+            </div>
+        </div>
+        <!-- End Top Bar -->
+
+        <div class="w-full flex h-full">
+
+            <!-- Side Bar -->
+            <div class="w-1/5 bg-gray-600 h-full p-2">
+                <button id="dashboardButton" class="text-white bg-black w-full flex justify-start px-2 py-5 mb-1">Dashboard</button>
+                <button id="leaveFormButton" class="text-white bg-black w-full flex justify-start px-2 py-5 mb-1">Apply for a Leave</button>
+                <button id="leaveFormButton" class="text-white bg-black w-full flex justify-start px-2 py-5 mb-1">Leave Breakdown</button>
+            </div>
+            <!-- End Sidebar -->
+
+            <!-- Dashboard Content -->
+            <div id="dashboardContent" class="w-4/5 h-full bg-sky-200 p-5">
+
+                <div class="flex items-center gap-5 bg-slate-50 shadow-2xl rounded-lg">
+                    <img src="/assets/workers.png" alt="#" class="large" style="object-fit: cover;position: relative;">
+                    <div class="flex flex-col gap-1">
+                        <div class="text-2xl">Welcome back..</div>
+                        <div class="text-3xl"><%= staff.name %></div>
+                        <div class="text-xl">Your dedication to the organization is highly appreciated</div>
+                    </div>
+                </div>
+
+                <div class="w-full mt-5 flex gap-5">
+
+                    <div class="w-full bg-white rounded-lg shadow-lg flex items-center justify-center h-96">
+                        <div class="w-64 h-64 rounded-full bg-sky-200 flex flex-col items-center justify-center">
+                            <div>
+                                Days a Leave is Allowed
+                            </div>
+                            <div class="text-xl font-bold">
+                                <%= staff.leave_balance %>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- End Dashboard Content -->
+
+            <!-- Leave Form -->
+            <div id="leaveForm" class="w-4/5 h-full bg-sky-200 p-5 hidden">
+
+            <div class="w-full flex flex-row gap-4">
+
+                <div class="w-1/2 flex flex-col gap-4">
+                    <div class="w-full">
+                        <div class="p-2">
+                            First Name: 
+                        </div>
+                        <div class="border-[2px] border-gray-500 bg-gray-400 px-4 py-2">
+                            <%= staff.name.split(" ")[0] %> 
+                        </div>
+                    </div>
+    
+                    <div class="w-full">
+                        <div class="p-2">
+                            Department Name 
+                        </div>
+                        <div class="border-[2px] border-gray-500 bg-gray-400 px-4 py-2">
+                            <%= department.name %> 
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-1/2 flex flex-col gap-4">
+
+                    <div class="w-full">
+                        <div class="p-2">
+                            Last Name: 
+                        </div>
+                        <div class="border-[2px] border-gray-500 bg-gray-400 px-4 py-2">
+                            <%= staff.name.split(" ")[1] %>
+                        </div>
+                    </div>
+
+                    <div class="w-full">
+                        <div class="p-2">
+                            Available Leave Days
+                        </div>
+                        <div class="border-[2px] border-gray-500 bg-gray-400 px-4 py-2">
+                            <%= staff.leave_balance %> 
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <form class="w-full mt-4">
+                <select name="leaveTypes" id="" class="w-[100%] mt-2">
+
+                    <% leaves.forEach(leave => { %>
+                        <option value="<%= leave.id %>"><%= leave.name %></option>
+                    <% }) %>
+
+                </select>
+
+                <div class="mt-4 flex justify-between py-2">
+                    <input class="w-[45%]" type="date" name="leaveStartDate">
+                    <input class="w-[45%]" type="date" name="leaveEndDate">
+                </div>
+
+                <div class="flex mt-5 items-center justify-between">
+                    <div class="w-[60%] flex flex-col gap-4">
+                        <div>Reason for leave: </div>
+                        <textarea class="w-full h-56" name="leaveNote" id=""></textarea>
+                    </div>
+                    <button class="w-36 text-white hover:bg-sky-500 h-14 bg-sky-600">Apply Leave</button>
+                </div>
+
+            </form>
+
+                
+            </div>
+            <!-- End Leave Form -->
+
+        </div>
+
+    </div>
+</body>
+<script>
+    const leaveForm = document.querySelector("#leaveForm")
+    const dashboardContent = document.querySelector("#dashboardContent")
+    const dashboardButton = document.querySelector("#dashboardButton")
+    const leaveFormButton = document.querySelector("#leaveFormButton") 
+
+    dashboardButton.addEventListener("click", ( event ) => {
+        event.preventDefault()
+        leaveForm.classList.add("hidden")
+        dashboardContent.classList.remove("hidden")
+    })
+
+    leaveFormButton.addEventListener("click", ( event ) => {
+        event.preventDefault()
+        dashboardContent.classList.add("hidden")
+        leaveForm.classList.remove("hidden")
+    })
+
+</script>
+</html>

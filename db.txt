@@ -1,0 +1,87 @@
+CREATE DATABASE lms_db;
+USE lms_db;
+
+-- Create table to store employee information
+CREATE TABLE Employees (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    department_id INT,
+    leave_balance INT DEFAULT 0,
+    FOREIGN KEY (department_id) REFERENCES Departments(id)
+);
+
+-- Create table to store department information
+CREATE TABLE Departments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    critical_period_start DATE,
+    critical_period_end DATE
+);
+
+-- Create table to store leave types
+CREATE TABLE LeaveTypes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    max_consecutive_days INT NOT NULL,
+    auto_time INT NOT NULL, -- Time in hours or days before automatic decision
+    priority INT NOT NULL
+);
+
+-- Create table to store leave requests
+CREATE TABLE LeaveRequests (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    employee_id INT,
+    leave_type_id INT,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES Employees(id),
+    FOREIGN KEY (leave_type_id) REFERENCES LeaveTypes(id)
+);
+
+-- Create table to store leave rules
+CREATE TABLE LeaveRules (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    rule_name VARCHAR(255) NOT NULL,
+    rule_description TEXT,
+    priority INT NOT NULL
+);
+
+
+INSERT INTO Departments (name, critical_period_start, critical_period_end) VALUES 
+('HR', '2024-12-20', '2025-01-05'), 
+('IT', '2024-06-01', '2024-06-15'), 
+('Finance', '2024-11-01', '2024-11-15');
+
+
+INSERT INTO Employees (name, department_id, leave_balance) VALUES 
+('John Doe', 1, 20), 
+('Jane Smith', 2, 15), 
+('Alice Johnson', 3, 30), 
+('Bob Brown', 1, 25);
+
+INSERT INTO LeaveTypes (name, max_consecutive_days, auto_time, priority) VALUES 
+('Annual Leave', 14, 48, 1),  -- auto_time in hours (48 hours = 2 days)
+('Sick Leave', 5, 24, 2),     -- auto_time in hours (24 hours = 1 day)
+('Maternity Leave', 90, 72, 3),  -- auto_time in hours (72 hours = 3 days)
+('Emergency Leave', 3, 12, 4);  -- auto_time in hours (12 hours = 0.5 days)
+
+-- Insert pending leave requests that should be processed based on auto-time
+INSERT INTO LeaveRequests (employee_id, leave_type_id, start_date, end_date, status, request_date) VALUES 
+(1, 1, '2024-07-01', '2024-07-14', 'Pending', '2024-06-29 08:00:00'), -- Annual Leave, request made 2 days ago
+(2, 2, '2024-07-03', '2024-07-05', 'Pending', '2024-06-30 08:00:00'), -- Sick Leave, request made 1 day ago
+(3, 3, '2024-07-01', '2024-09-30', 'Pending', '2024-06-27 08:00:00'), -- Maternity Leave, request made 3 days ago
+(4, 4, '2024-07-01', '2024-07-02', 'Pending', '2024-06-30 20:00:00'); -- Emergency Leave, request made 0.5 day ago
+
+INSERT INTO LeaveRules (rule_name, rule_description, priority) VALUES 
+('Max Consecutive Days', 'Maximum consecutive leave days should not exceed Y days', 1), 
+('Leave Deduction', 'Leave is deducted from the balance when approved', 2), 
+('Auto Time', 'Different leaves have different auto-time', 3), 
+('Department Leave Percent', 'A certain percent of staffs in a department should not be exceeded', 4), 
+('Leave Prioritization', 'Prioritize leave requests based on the type of leave', 5), 
+('Conflict Resolution', 'Automatically resolve conflicts based on predefined rules such as "first come, first served"', 6), 
+('Critical Business Period', 'Automatically reject leave requests during critical business period', 7);
+
+
+
