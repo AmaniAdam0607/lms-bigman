@@ -120,7 +120,8 @@
 
             </div>
 
-            <form class="w-full mt-4">
+            <!-- Start leave form -->
+            <form id="leaveFormFields" class="w-full mt-4">
                 <select name="leaveTypes" id="" class="w-[100%] mt-2">
 
                     <% leaves.forEach(leave => { %>
@@ -130,8 +131,8 @@
                 </select>
 
                 <div class="mt-4 flex justify-between py-2">
-                    <input class="w-[45%]" type="date" name="leaveStartDate">
-                    <input class="w-[45%]" type="date" name="leaveEndDate">
+                    <input class="w-[45%]" type="date" name="leaveStartDate" id="leaveStartDate">
+                    <input class="w-[45%]" type="date" name="leaveEndDate" id="leaveEndDate">
                 </div>
 
                 <div class="flex mt-5 items-center justify-between">
@@ -139,10 +140,11 @@
                         <div>Reason for leave: </div>
                         <textarea class="w-full h-56" name="leaveNote" id=""></textarea>
                     </div>
-                    <button class="w-36 text-white hover:bg-sky-500 h-14 bg-sky-600">Apply Leave</button>
+                    <button class="w-36 text-white hover:bg-sky-500 h-14 bg-sky-600" id="applyButton" data-leave-balance="<%= staff.leave_balance %>" type="submit">Apply Leave</button>
                 </div>
 
             </form>
+            <!-- End Leave Form-->
 
                 
             </div>
@@ -170,5 +172,66 @@
         leaveForm.classList.remove("hidden")
     })
 
+    const leaveFormApplyButton = document.querySelector("#applyButton")
+    const startDate = document.querySelector("#leaveStartDate")
+    const endDate = document.querySelector("#leaveEndDate")
+
+    let startDate_ = null
+    let endDate_ = null
+
+    startDate.addEventListener("change", function() {
+        var input = this.value;
+        startDate_ = new Date(input);
+        // console.log(input); //e.g. 2015-11-13
+        // console.log(dateEntered); //e.g. Fri Nov 13 2015 00:00:00 GMT+0000 (GMT Standard Time)
+    });
+
+    endDate.addEventListener("change", function() {
+        var input = this.value;
+        endDate_ = new Date(input);
+        //console.log(input); //e.g. 2015-11-13
+        //console.log(dateEntered); //e.g. Fri Nov 13 2015 00:00:00 GMT+0000 (GMT Standard Time)
+});
+
+
+    leaveFormApplyButton.addEventListener('click', (event) => {
+        event.preventDefault()
+        //console.log(startDate_)
+        //console.log(endDate_)
+
+        const currentDate = new Date()
+
+        if (!endDate_ || !startDate_) {
+            alert("All the dates must be chosen")
+            return ;
+        }
+
+        if (startDate_ <= currentDate) {
+            alert("The start date must be a day after the current date.");
+            event.preventDefault();
+            return;
+        }
+
+        if (startDate_ >= endDate_) {
+            alert("The start date must be less than the end date.");
+            event.preventDefault();
+            return;
+        }
+
+        // Check if the difference between start date and end date is not more than 28 days
+        const diffInTime = endDate_.getTime() - startDate_.getTime();
+        const diffInDays = diffInTime / (1000 * 3600 * 24);
+
+        // console.log("Difference in Days:", diffInDays);
+
+        const currentLeaveBalance = new Number(leaveFormApplyButton.getAttribute('data-leave-balance'))
+
+        if (diffInDays > currentLeaveBalance) {
+            alert(`You are current leave balance is ${currentLeaveBalance}, You are not allowed to apply for more than that!`);
+            event.preventDefault();
+            return;
+        }
+
+        })
 </script>
 </html>

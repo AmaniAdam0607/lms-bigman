@@ -21,4 +21,20 @@ const checkTimeDifferenceInMillSecond = (givenTimestamp, MAX_TIME) => {
     return differenceInMilliseconds > fromMinsToMills(MAX_TIME)
 }
 
-module.exports = { fromHrsToMills, fromMinsToMills, checkTimeDifferenceInMillSecond }
+const differenceBetweenDatesInDays = (day1, day2) => {
+        // Dates in ISO format
+    const date1 = new Date(day1);
+    const date2 = new Date(day2);
+
+    // Calculate the difference in milliseconds
+    const differenceMs = Math.abs(date2 - date1);
+
+    // Convert milliseconds to days
+    const differenceDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
+
+    return differenceDays
+    // console.log(`Difference in days: ${differenceDays}`);
+
+}
+
+module.exports = { differenceBetweenDatesInDays, fromHrsToMills, fromMinsToMills, checkTimeDifferenceInMillSecond }
