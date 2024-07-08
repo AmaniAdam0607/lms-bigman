@@ -125,7 +125,7 @@
                 <select name="leaveTypes" id="" class="w-[100%] mt-2">
 
                     <% leaves.forEach(leave => { %>
-                        <option value="<%= leave.id %>"><%= leave.name %></option>
+                        <option id="leaveIdInput" data-user-id="<%= staff.id %>" value="<%= leave.id %>"><%= leave.name %></option>
                     <% }) %>
 
                 </select>
@@ -138,7 +138,7 @@
                 <div class="flex mt-5 items-center justify-between">
                     <div class="w-[60%] flex flex-col gap-4">
                         <div>Reason for leave: </div>
-                        <textarea class="w-full h-56" name="leaveNote" id=""></textarea>
+                        <textarea class="w-full h-56" name="leaveNote" id="reasonInput"></textarea>
                     </div>
                     <button class="w-36 text-white hover:bg-sky-500 h-14 bg-sky-600" id="applyButton" data-leave-balance="<%= staff.leave_balance %>" type="submit">Apply Leave</button>
                 </div>
@@ -194,7 +194,7 @@
 });
 
 
-    leaveFormApplyButton.addEventListener('click', (event) => {
+    leaveFormApplyButton.addEventListener('click', async (event) => {
         event.preventDefault()
         //console.log(startDate_)
         //console.log(endDate_)
@@ -230,6 +230,35 @@
             alert(`You are current leave balance is ${currentLeaveBalance}, You are not allowed to apply for more than that!`);
             event.preventDefault();
             return;
+        }
+
+        const data = {
+            userId : document.querySelector("#leaveIdInput").getAttribute("data-user-id"), 
+            leaveTypeId : document.querySelector("#leaveIdInput").value, 
+            startDate : startDate.value, 
+            endDate : endDate.value, 
+            reason : document.querySelector("#reasonInput").value
+        }
+
+        try {
+            const response = await fetch('/new/request/', {
+                method: "POST",
+                headers: {
+                    "Content-type" : "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+
+            const responseJSON = await response.json()
+
+            if (responseJSON.STATUS === 'FAIL') {
+                alert(responseJSON.MESSAGE)
+            }
+            else {
+                location.reload()
+            }
+        } catch (error) {
+            
         }
 
         })

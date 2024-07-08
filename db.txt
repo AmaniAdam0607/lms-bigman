@@ -5,6 +5,7 @@ USE lms_db;
 CREATE TABLE Employees (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
+    password VARCHAR(255),
     department_id INT,
     leave_balance INT DEFAULT 0,
     FOREIGN KEY (department_id) REFERENCES Departments(id)

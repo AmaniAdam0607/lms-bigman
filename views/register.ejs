@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Login</title>
+    <style>
+        img.large {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="w-screen h-screen">
+        <img src="/assets/workers.png" alt="Image for a course." class="large" style="object-fit: cover;position: relative;">
+        <div class="fixed bottom-0 top-0 left-0 right-0 bg-black opacity-60">
+            <div class="flex flex-col items-end justify-center h-full">
+                <form id="registerForm" class="mr-20 flex flex-col gap-5">
+                    <div class="text-white font-bold text-center text-5xl tracking-wider">Register</div>
+                    <div class="text-white">Username : </div>
+                    <input id="userName" type="text" name="userName" maxlength="100" class="w-[350px]  border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
+                    <div class="text-white">Department : </div>
+                    <select name="departmentIdInputSelect" id="departmentIdSelect" class="w-[350px]  border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
+                        <% Departments.forEach(department => { %>
+                            <option id="departmentIdInput"  value="<%= department.id %>"><%= department.name %></option>
+                        <% }) %>
+                    </select>
+                    <div class="text-white">Password : </div>
+                    <input id="password" type="text" name="password" maxlength="100" class="w-[350px] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
+                    <button type="submit" id="registerButton" class="px-20 py-3 m-5 bg-sky-900 rounded-sm self-center hover:bg-sky-700 text-white font-bold">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+    document.getElementById('registerForm').addEventListener('submit', async function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const userName = document.getElementById('userName').value;
+    const departmentId = document.getElementById('departmentIdSelect').value;
+    const password = document.getElementById('password').value;
+
+    if (!userName) {
+        alert('Username cannot be empty.');
+        return;
+    }
+    if (!departmentId) {
+        alert('Please select a department.');
+        return;
+    }
+    if (!password) {
+        alert('Password cannot be empty.');
+        return;
+    }
+
+    const data = {
+        name: userName,
+        departmentId: departmentId,
+        password: password
+    };
+
+    try {
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+
+        if (response.ok) {
+            const result = await response.json();
+            // Handle success (e.g., show a message, redirect)
+            alert('Registration successful');
+            // You can redirect or clear the form here
+            window.location.href = '/login'; // Redirect to home or another page
+        } else {
+            // Handle error
+            const error = await response.json();
+            alert('Error: error adding user');
+        }
+
+    } catch (error) {
+        alert('Network error: ' + Error.message);
+    }
+});
+
+</script>
+</html>

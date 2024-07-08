@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Login</title>
+    <style>
+        img.large {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="w-screen h-screen">
+        <img src="/assets/workers.png" alt="Image for a course." class="large" style="object-fit: cover;position: relative;">
+        <div class="fixed bottom-0 top-0 left-0 right-0 bg-black opacity-60">
+            <div class="flex flex-col items-end justify-center h-full">
+                <form action="/login" method="POST" class="mr-20 flex flex-col gap-5">
+                    <div class="text-white font-bold text-center text-5xl tracking-wider">Login</div>
+                    <div class="text-white">Username : </div>
+                    <input id="username" type="text" name="name" maxlength="100" class="w-[350px] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:border-blue-500 text-sm" required>
+                    <div class="text-white">Password : </div>
+                    <input id="password" type="password" name="password" maxlength="100" class="w-[350px] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:border-blue-500 text-sm" required>
+                    <% if (messages.error) { %>
+                        <div class="text-white"><%= messages.error %></div>
+                    <% } %>
+                    <button type="submit" id="loginButton" class="px-20 py-3 m-5 bg-sky-900 rounded-sm self-center hover:bg-sky-700 text-white font-bold">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+</script>
+</html>
