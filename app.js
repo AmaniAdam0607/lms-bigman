@@ -6,6 +6,7 @@ const mysql = require('mysql2/promise');
 const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
+var morgan = require('morgan')
 
 const initializePassport = require('./password-config')
 
@@ -37,6 +38,7 @@ app.use(session({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(morgan('combined'))
 
 const pool = mysql.createPool({
     host: 'localhost',
@@ -59,20 +61,26 @@ initializePassport(passport, async (name) => {
 )
 
 
-app.get("/staff/dashboard/:id", async ( req, res ) => {
-    const { id } = req.params
+app.get("/staff/dashboard", async ( req, res ) => {
+    // console.log(req.user)
+    const { id } = req.user.id
     let sql = 'SELECT * FROM employees WHERE id = ?'
+
+    if (req.user.user_role === 'admin') {
+        return res.redirect("/hod/dashboard");
+    }
+
     try {
         const [results] = await pool.query(sql, [id])
 
         //console.log(results)
-        let staff = results[0]
+        let staff = req.user
         //console.log(staff)
 
         try {
             let sql2 = 'SELECT * FROM departments WHERE id = ?'
 
-            const [results] = await pool.query(sql2, [staff.department_id])
+            const [results] = await pool.query(sql2, [req.user.department_id])
 
             let department = results[0]
 
@@ -105,7 +113,7 @@ app.get("/login", (req, res) => {
 })
 
 app.post("/login", passport.authenticate('local', {
-    successRedirect: '/',
+    successRedirect: '/staff/dashboard',
     failureRedirect: '/login',
     failureFlash: true
 }))
@@ -415,7 +423,7 @@ const getUserByName = async (name) => {
     }
 }
 
-getUserByName("Viatu")
+// getUserByName("Viatu")
 
 // deductIfLeaveIsAnnual(41)
 
